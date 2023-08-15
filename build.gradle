@@ -2,6 +2,7 @@ buildscript {
     ext {
         spring = "2.4.1"
         boot = "org.springframework.boot"
+        lombok = "org.projectlombok:lombok"
     }
     repositories {
         mavenCentral()
@@ -12,7 +13,7 @@ buildscript {
 }
 
 allprojects {
-    group = "com.fc.securitypractice"
+    group = "com.sp.fc"
     version = "1.0.0"
 }
 
@@ -35,11 +36,14 @@ subprojects {
     }
 
     dependencies {
-        developmentOnly("$boot:spring-boot-devtools")
-        implementation "$boot:spring-boot-starter-security"
+        developmentOnly("org.springframework.boot:spring-boot-devtools")
+        implementation "org.springframework.boot:spring-boot-starter-security"
         implementation 'com.fasterxml.jackson.core:jackson-annotations'
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
+
+        compileOnly lombok
+        testCompileOnly lombok
+        annotationProcessor lombok
+        testAnnotationProcessor lombok
 
         testImplementation "$boot:spring-boot-starter-test"
     }
@@ -47,7 +51,9 @@ subprojects {
     test {
         useJUnitPlatform()
     }
+
 }
+
 
 ["comp", "web"].each {
     def subProjectDir = new File(projectDir, it)

@@ -22,9 +22,9 @@ rootProject.name = 'security-practice'
         }
 
         [
-                "src/main/java/com/fc/securitypractice",
+                "src/main/java/com/sp/fc",
                 "src/main/resources",
-                "src/test/java/com/fc/securitypractice",
+                "src/test/java/com/sp/fc",
                 "src/test/resources"
         ].each {srcDir->
             def srcFolder = new File(subDir.absolutePath, srcDir)
