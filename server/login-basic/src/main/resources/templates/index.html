@@ -22,7 +22,7 @@
             <a href="/user-page">  유저 페이지  </a>
         </div>
         <div class="link" sec:authorize="authenticated">
-            <a href="/admin-page">  관리자 로그인 </a>
+            <a href="/admin-page">  관리자 페이지 </a>
         </div>
         <div class="link" sec:authorize="authenticated">
             <form th:action="@{/logout}" method="post">
