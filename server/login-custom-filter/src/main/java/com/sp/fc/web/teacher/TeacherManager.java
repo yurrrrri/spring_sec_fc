@@ -1,4 +1,4 @@
-package com.sp.fc.web.student;
+package com.sp.fc.web.teacher;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -12,19 +12,19 @@ import java.util.HashMap;
 import java.util.Set;
 
 @Component
-public class StudentManager implements AuthenticationProvider, InitializingBean {
+public class TeacherManager implements AuthenticationProvider, InitializingBean {
 
-    private HashMap<String, Student> studentDB = new HashMap<>();
+    private HashMap<String, Teacher> teacherDB = new HashMap<>();
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
 
-        if (studentDB.containsKey(token.getName())) {
-            Student student = studentDB.get(token.getName());
-            return StudentAuthenticationToken.builder()
-                    .principal(student)
-                    .details(student.getUsername())
+        if (teacherDB.containsKey(token.getName())) {
+            Teacher teacher = teacherDB.get(token.getName());
+            return TeacherAuthenticationToken.builder()
+                    .principal(teacher)
+                    .details(teacher.getUsername())
                     .authenticated(true)
                     .build();
         }
@@ -40,9 +40,8 @@ public class StudentManager implements AuthenticationProvider, InitializingBean 
     @Override
     public void afterPropertiesSet() throws Exception {
         Set.of(
-                new Student("yuri", "유리", Set.of(new SimpleGrantedAuthority("ROLE_STUDENT"))),
-                new Student("may", "메이", Set.of(new SimpleGrantedAuthority("ROLE_STUDENT"))),
-                new Student("henny", "혜니", Set.of(new SimpleGrantedAuthority("ROLE_STUDENT")))
-        ).forEach(s -> studentDB.put(s.getId(), s));
+                new Teacher("tammy", "손선생", Set.of(new SimpleGrantedAuthority("ROLE_TEACHER")))
+        ).forEach(s -> teacherDB.put(s.getId(), s));
     }
+
 }

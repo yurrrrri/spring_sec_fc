@@ -1,25 +1,31 @@
 package com.sp.fc.web.config;
 
 import com.sp.fc.web.student.StudentManager;
+import com.sp.fc.web.teacher.TeacherManager;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @EnableWebSecurity(debug = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final StudentManager studentManager;
+    private final TeacherManager teacherManager;
 
-    public SecurityConfig(StudentManager studentManager) {
+    public SecurityConfig(StudentManager studentManager, TeacherManager teacherManager) {
         this.studentManager = studentManager;
+        this.teacherManager = teacherManager;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(studentManager);
+        auth.authenticationProvider(teacherManager);
     }
 
     @Override
@@ -28,7 +34,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests(request ->
                         request.antMatchers("/").permitAll()
                                 .anyRequest().authenticated())
-                .formLogin(login -> login.loginPage("/login").permitAll());
+                .formLogin(login -> login.loginPage("/login").permitAll()
+                        .defaultSuccessUrl("/", false)
+                        .failureUrl("/login-error"))
+                .logout(logout -> logout.logoutSuccessUrl("/"))
+                .exceptionHandling(e -> e.accessDeniedPage("/access-denied"));
     }
 
     @Override
@@ -36,4 +46,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
+
 }
