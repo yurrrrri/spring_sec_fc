@@ -1,6 +1,6 @@
 package com.sp.fc.web.config;
 
-import com.sp.fc.service.SpUserService;
+import com.sp.fc.user.service.SpUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
