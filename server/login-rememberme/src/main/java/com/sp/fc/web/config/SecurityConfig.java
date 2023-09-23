@@ -9,14 +9,19 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import javax.servlet.http.HttpSessionEvent;
+import javax.sql.DataSource;
 import java.time.LocalDateTime;
 
 @EnableWebSecurity(debug = true)
@@ -25,6 +30,7 @@ import java.time.LocalDateTime;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final SpUserService userService;
+    private final DataSource dataSource;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -64,6 +70,41 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 System.out.printf("===>> [%s] 세션 아이디 변경 %s:%s \n", LocalDateTime.now(), oldSessionId, event.getSession().getId());
             }
         });
+    }
+
+    @Bean
+    PersistentTokenRepository tokenRepository() {
+        JdbcTokenRepositoryImpl repository = new JdbcTokenRepositoryImpl();
+        repository.setDataSource(dataSource);
+
+        try {
+            repository.removeUserTokens("1");
+        } catch (Exception e) {
+            repository.setCreateTableOnStartup(true);
+        }
+
+        return repository;
+    }
+
+    @Bean
+    PersistentTokenBasedRememberMeServices rememberMeServices() {
+        return new PersistentTokenBasedRememberMeServices("hello", userService, tokenRepository());
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests(request -> request
+                        .antMatchers("/").permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(login ->
+                        login.loginPage("/login")
+                                .loginProcessingUrl("/loginprocess")
+                                .permitAll()
+                                .defaultSuccessUrl("/", false)
+                                .failureUrl("/login-error"))
+                .logout(logout -> logout.logoutSuccessUrl("/"))
+                .exceptionHandling(error -> error.accessDeniedPage("/access-denied"))
+                .rememberMe(r -> r.rememberMeServices(rememberMeServices()));
     }
 
     @Override
