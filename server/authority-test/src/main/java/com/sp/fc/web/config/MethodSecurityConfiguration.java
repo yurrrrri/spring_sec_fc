@@ -1,6 +1,7 @@
 package com.sp.fc.web.config;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -21,14 +22,24 @@ import java.util.List;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class MethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {
 
+    private final CustomPermissionEvaluator permissionEvaluator;
+
+    public MethodSecurityConfiguration(CustomPermissionEvaluator permissionEvaluator) {
+        this.permissionEvaluator = permissionEvaluator;
+    }
+
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {
-        return new DefaultMethodSecurityExpressionHandler() {
+        DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler() {
             @Override
             protected MethodSecurityExpressionOperations createSecurityExpressionRoot(Authentication authentication, MethodInvocation invocation) {
-                return new CustomMethodSecurityExpressionRoot(authentication, invocation);
+                CustomMethodSecurityExpressionRoot root = new CustomMethodSecurityExpressionRoot(authentication, invocation);
+                root.setPermissionEvaluator(getPermissionEvaluator());
+                return root;
             }
         };
+        handler.setPermissionEvaluator(permissionEvaluator);
+        return handler;
     }
 
     @Override

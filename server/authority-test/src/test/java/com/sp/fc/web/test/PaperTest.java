@@ -41,4 +41,34 @@ class PaperTest extends WebIntegrationTest {
         // then
         assertEquals(200, response.getStatusCodeValue());
     }
+
+    @Test
+    void cannotAccessTest() {
+        // given
+        paperService.setPaper(paper2);
+        client = new TestRestTemplate("user1", "1111");
+
+        // when
+        ResponseEntity<Object> response = client.exchange(uri("/paper/get/2"),
+                HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+                });
+
+        // then
+        assertEquals(403, response.getStatusCodeValue());
+    }
+
+    @Test
+    void cannotAccessPreparePaperTest() {
+        // given
+        paperService.setPaper(paper2);
+        client = new TestRestTemplate("user2", "1111");
+
+        // when
+        ResponseEntity<Object> response = client.exchange(uri("/paper/get/2"),
+                HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+                });
+
+        // then
+        assertEquals(403, response.getStatusCodeValue());
+    }
 }
