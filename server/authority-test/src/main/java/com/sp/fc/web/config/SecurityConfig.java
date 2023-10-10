@@ -52,7 +52,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .withUser(User.withDefaultPasswordEncoder()
                         .username("tutor1")
                         .password("1111")
-                        .roles("USER", "TUTOR"));
+                        .roles("USER", "TUTOR"))
+                .withUser(User.withDefaultPasswordEncoder()
+                        .username("primary")
+                        .password("1111")
+                        .roles("USER", "PRIMARY"));
     }
 
     @Autowired

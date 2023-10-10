@@ -78,4 +78,19 @@ class PaperTest extends WebIntegrationTest {
         // then
         assertEquals(403, response.getStatusCodeValue());
     }
+
+    @Test
+    void takeAllPages() {
+        paperService.setPaper(paper1);
+        paperService.setPaper(paper2);
+        paperService.setPaper(paper3);
+
+        client = new TestRestTemplate("primary", "1111");
+        ResponseEntity<List<Paper>> response = client.exchange(uri("/paper/getPapersByPrimary"),
+                HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+                });
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(3, response.getBody().size());
+    }
 }

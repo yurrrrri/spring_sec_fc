@@ -4,6 +4,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,5 +32,9 @@ public class PaperService implements InitializingBean {
 
     public Paper getPaper(Long paperId) {
         return paperDB.get(paperId);
+    }
+
+    public List<Paper> getAllPapers() {
+        return new ArrayList<>(paperDB.values());
     }
 }

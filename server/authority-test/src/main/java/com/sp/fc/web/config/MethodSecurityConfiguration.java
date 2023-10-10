@@ -19,7 +19,7 @@ import org.springframework.security.core.Authentication;
 import java.util.ArrayList;
 import java.util.List;
 
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class MethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {
 
     private final CustomPermissionEvaluator permissionEvaluator;
@@ -51,7 +51,7 @@ public class MethodSecurityConfiguration extends GlobalMethodSecurityConfigurati
         decisionVoters.add(new PreInvocationAuthorizationAdviceVoter(expressionAdvice));
         decisionVoters.add(new RoleVoter());
         decisionVoters.add(new AuthenticatedVoter());
-//        decisionVoters.add(new CustomVoter());
+        decisionVoters.add(new CustomVoter());
 
         // 긍정 위원회 소집
         return new AffirmativeBased(decisionVoters);
