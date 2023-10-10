@@ -4,6 +4,7 @@ import com.sp.fc.web.service.Paper;
 import com.sp.fc.web.service.PaperService;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,8 @@ public class PaperController {
 
     private final PaperService paperService;
 
-    @PreAuthorize("isStudent()")
+//    @PreAuthorize("isStudent()")
+    @PostFilter("notPrepareState(filterObject) && filterObject.studentIds.contains(#user.username)")
     @GetMapping("/mypapers")
     public List<Paper> myPapers(@AuthenticationPrincipal User user) {
         return paperService.getMyPapers(user.getUsername());

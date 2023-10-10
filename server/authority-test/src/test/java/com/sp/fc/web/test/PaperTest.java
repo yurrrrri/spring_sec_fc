@@ -26,11 +26,17 @@ class PaperTest extends WebIntegrationTest {
     private Paper paper2 = Paper.builder()
             .paperId(2L).title("시험 2").tutorId("tutor1").studentIds(List.of("user2")).state(Paper.State.PREPARE)
             .build();
+    private Paper paper3 = Paper.builder()
+            .paperId(3L).title("시험 3").tutorId("tutor1").studentIds(List.of("user1")).state(Paper.State.READY)
+            .build();
 
     @Test
     void getPaperList() {
         // given
         paperService.setPaper(paper1);
+        paperService.setPaper(paper2);
+        paperService.setPaper(paper3);
+
         client = new TestRestTemplate("user1", "1111");
 
         // when
@@ -40,6 +46,7 @@ class PaperTest extends WebIntegrationTest {
 
         // then
         assertEquals(200, response.getStatusCodeValue());
+        assertEquals(1, response.getBody().size());
     }
 
     @Test
