@@ -4,7 +4,6 @@ import com.sp.fc.web.service.Paper;
 import com.sp.fc.web.service.PaperService;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,7 +26,7 @@ public class PaperController {
         return paperService.getMyPapers(user.getUsername());
     }
 
-    @Secured({"SCHOOL_PRIMARY"})
+    //    @Secured({"SCHOOL_PRIMARY"})
     @GetMapping("/getPapersByPrimary")
     public List<Paper> getPapersByPrimary(@AuthenticationPrincipal User user) {
         return paperService.getAllPapers();
