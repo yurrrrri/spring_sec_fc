@@ -26,9 +26,9 @@ public class CustomVoter implements AccessDecisionVoter<MethodInvocation> {
         String role = attributes.stream()
                 .filter(attr -> attr.getAttribute().startsWith(PREFIX))
                 .map(attr -> attr.getAttribute().substring(PREFIX.length()))
-                .findFirst().get();
+                .findFirst().orElseGet(null);
 
-        if (authentication.getAuthorities().stream()
+        if (role != null && authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_" + role.toUpperCase()))) {
             return ACCESS_GRANTED;
         }
